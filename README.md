@@ -78,13 +78,6 @@ python app.py
 
 打开浏览器访问: `http://localhost:5000`
 
-## 👤 默认账号
-
-| 角色   | 用户名   | 密码       |
-| ------ | -------- | ---------- |
-| 管理员 | admin    | admin123   |
-| 教师   | teacher1 | teacher123 |
-| 学生   | student1 | student123 |
 
 **⚠️ 重要**: 首次部署后请立即修改所有默认密码！
 
@@ -181,9 +174,6 @@ DEBUG = True                     # 调试模式（生产环境设为False）
 
 欢迎提交Issue和Pull Request！
 
-## 📄 许可证
-
-本项目仅供教学和学习使用。
 
 ## 📮 联系方式
 
