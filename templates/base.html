@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}表情符号检查器{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        {% if current_user.is_authenticated %}
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h2>📊 表情符号检查器</h2>
+            </div>
+            <div class="nav-menu">
+                {% if current_user.is_student() %}
+                <a href="{{ url_for('student.dashboard') }}" class="nav-link">主页</a>
+                <a href="{{ url_for('student.courses') }}" class="nav-link">选课</a>
+                <a href="{{ url_for('student.send_emoji') }}" class="nav-link">发送表情</a>
+                <a href="{{ url_for('student.history') }}" class="nav-link">历史记录</a>
+                {% else %}
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-link">主页</a>
+                {% if current_user.is_admin() %}
+                <a href="{{ url_for('admin.users') }}" class="nav-link">用户管理</a>
+                {% endif %}
+                <a href="{{ url_for('admin.courses') }}" class="nav-link">课程管理</a>
+                <a href="{{ url_for('admin.emoji_data') }}" class="nav-link">表情数据</a>
+                <a href="{{ url_for('admin.statistics') }}" class="nav-link">统计分析</a>
+                {% endif %}
+                <a href="{{ url_for('auth.change_password') }}" class="nav-link">修改密码</a>
+                <a href="{{ url_for('auth.logout') }}" class="nav-link logout">退出</a>
+                <span class="nav-user">👤 {{ current_user.username }}</span>
+            </div>
+        </nav>
+        {% endif %}
+
+        <!-- 消息提示 -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+                <button class="close-btn" onclick="this.parentElement.remove()">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- 主要内容 -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>&copy; 2024 表情符号检查器系统 | 用于教学反馈与学生情绪监测</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

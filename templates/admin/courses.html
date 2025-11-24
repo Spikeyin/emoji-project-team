@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}课程管理{% endblock %}
+
+{% block content %}
+<div class="content-box">
+    <h1>课程管理</h1>
+
+    {% if courses %}
+    <div class="course-list">
+        {% for course in courses %}
+        <div class="course-card admin">
+            <h3>{{ course.course_name }}</h3>
+            <p class="course-code">课程代码: {{ course.course_code }}</p>
+            <p class="course-teacher">授课教师: {{ course.teacher_name }}</p>
+            <p class="course-desc">{{ course.description }}</p>
+            <p class="course-semester">学期: {{ course.semester }}</p>
+            <div class="course-actions">
+                <a href="{{ url_for('admin.emoji_data', course_id=course.id) }}" class="btn btn-sm btn-primary">查看数据</a>
+                <a href="{{ url_for('admin.statistics', course_id=course.id) }}"
+                    class="btn btn-sm btn-secondary">统计分析</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">暂无课程</p>
+    {% endif %}
+</div>
+{% endblock %}

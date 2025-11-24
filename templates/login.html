@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}登录 - 表情符号检查器{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h1>登录</h1>
+        <p class="subtitle">欢迎回到表情符号检查器系统</p>
+
+        <form method="POST" action="{{ url_for('auth.login') }}" class="auth-form">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">登录</button>
+        </form>
+
+        <div class="auth-links">
+            <p>还没有账号？ <a href="{{ url_for('auth.register') }}">立即注册</a></p>
+        </div>
+
+        <div class="demo-info">
+            <h3>演示账号</h3>
+            <p>👨‍💼 管理员: admin / admin123</p>
+            <p>👨‍🏫 教师: teacher1 / teacher123</p>
+            <p>👨‍🎓 学生: student1 / student123</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}管理主页{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>管理员控制面板</h1>
+    <p class="subtitle">欢迎，{{ current_user.full_name or current_user.username }}</p>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+                <h3>用户总数</h3>
+                <p class="stat-value">{{ users_count }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-info">
+                <h3>课程总数</h3>
+                <p class="stat-value">{{ courses_count }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">😊</div>
+            <div class="stat-info">
+                <h3>本周反馈数</h3>
+                <p class="stat-value">{{ emoji_stats.total }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <div class="content-box">
+            <h2>本周表情统计</h2>
+            {% if emoji_stats.emoji_stats %}
+            <div class="emoji-stats">
+                {% for stat in emoji_stats.emoji_stats %}
+                <div class="emoji-stat-item">
+                    <span class="emoji-large">{{ stat.emoji }}</span>
+                    <span class="emoji-stat-name">{{ stat.emoji_name }}</span>
+                    <span class="emoji-stat-count">{{ stat.count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-state">暂无数据</p>
+            {% endif %}
+        </div>
+
+        <div class="content-box">
+            <h2>快捷操作</h2>
+            <div class="quick-actions">
+                {% if current_user.is_admin() %}
+                <a href="{{ url_for('admin.users') }}" class="action-btn">
+                    <span class="action-icon">👥</span>
+                    <span>用户管理</span>
+                </a>
+                {% endif %}
+                <a href="{{ url_for('admin.emoji_data') }}" class="action-btn">
+                    <span class="action-icon">📊</span>
+                    <span>表情数据</span>
+                </a>
+                <a href="{{ url_for('admin.statistics') }}" class="action-btn">
+                    <span class="action-icon">📈</span>
+                    <span>统计分析</span>
+                </a>
+                <a href="{{ url_for('admin.export') }}" class="action-btn">
+                    <span class="action-icon">💾</span>
+                    <span>导出数据</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

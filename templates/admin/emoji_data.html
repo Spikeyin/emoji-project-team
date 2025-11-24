@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}表情数据{% endblock %}
+
+{% block content %}
+<div class="content-box">
+    <h1>表情数据查看</h1>
+
+    <div class="filter-bar">
+        <form method="GET" action="{{ url_for('admin.emoji_data') }}" class="inline-form">
+            <select name="course_id" onchange="this.form.submit()">
+                <option value="">全部课程</option>
+                {% for course in courses %}
+                <option value="{{ course.id }}" {% if course.id==selected_course_id %}selected{% endif %}>
+                    {{ course.course_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <a href="{{ url_for('admin.export', course_id=selected_course_id or '', days=30) }}" class="btn btn-primary">
+            💾 导出数据
+        </a>
+    </div>
+
+    {% if records %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>课程</th>
+                    <th>表情</th>
+                    <th>情绪</th>
+                    <th>日期</th>
+                    <th>时间</th>
+                    <th>补充说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>
+                        {% if record.course_name %}
+                        {{ record.course_name }} ({{ record.course_code }})
+                        {% else %}
+                        课程ID: {{ record.course_id }}
+                        {% endif %}
+                    </td>
+                    <td class="emoji-cell">{{ record.emoji }}</td>
+                    <td>{{ record.emoji_name }}</td>
+                    <td>{{ record.session_date }}</td>
+                    <td>{{ record.time_formatted }}</td>
+                    <td>{{ record.comment or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p class="table-info">显示最近 {{ records|length }} 条记录（按匿名原则，不显示学生身份）</p>
+    {% else %}
+    <p class="empty-state">暂无表情数据</p>
+    {% endif %}
+</div>
+{% endblock %}

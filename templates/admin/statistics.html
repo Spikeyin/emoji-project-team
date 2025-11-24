@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}统计分析{% endblock %}
+
+{% block content %}
+<div class="content-box">
+    <h1>统计分析</h1>
+
+    <div class="filter-bar">
+        <form method="GET" action="{{ url_for('admin.statistics') }}" class="inline-form">
+            <select name="course_id" onchange="this.form.submit()">
+                <option value="">全部课程</option>
+                {% for course in courses %}
+                <option value="{{ course.id }}" {% if course.id==selected_course_id %}selected{% endif %}>
+                    {{ course.course_name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <select name="days" onchange="this.form.submit()">
+                <option value="7" {% if days==7 %}selected{% endif %}>最近7天</option>
+                <option value="30" {% if days==30 %}selected{% endif %}>最近30天</option>
+                <option value="90" {% if days==90 %}selected{% endif %}>最近90天</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="stats-summary">
+        <div class="stat-card">
+            <h3>总反馈数</h3>
+            <p class="stat-value">{{ stats.total }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>表情类型</h3>
+            <p class="stat-value">{{ stats.emoji_stats|length }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>活跃天数</h3>
+            <p class="stat-value">{{ stats.date_stats|length }}</p>
+        </div>
+    </div>
+
+    {% if stats.emoji_stats %}
+    <div class="chart-container">
+        <h2>表情分布统计</h2>
+        <canvas id="emojiChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <h2>日期趋势统计</h2>
+        <canvas id="dateChart"></canvas>
+    </div>
+
+    <div class="content-box">
+        <h2>详细数据</h2>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>表情</th>
+                        <th>情绪</th>
+                        <th>数量</th>
+                        <th>占比</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in stats.emoji_stats %}
+                    <tr>
+                        <td class="emoji-cell">{{ item.emoji }}</td>
+                        <td>{{ item.emoji_name }}</td>
+                        <td>{{ item.count }}</td>
+                        <td>{{ "%.1f"|format(item.count / stats.total * 100) }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <p class="empty-state">暂无统计数据</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    // 表情分布图
+    const emojiCtx = document.getElementById('emojiChart');
+    if (emojiCtx) {
+        const emojiData = {
+            labels: [{% for item in stats.emoji_stats %}'{{ item.emoji_name }}', {% endfor %}],
+    datasets: [{
+        label: '反馈数量',
+        data: [{% for item in stats.emoji_stats %}{{ item.count }}, {% endfor %}],
+        backgroundColor: [
+            '#4CAF50', '#2196F3', '#FF9800', '#F44336',
+            '#9C27B0', '#00BCD4', '#FFEB3B', '#795548'
+        ]
+        }]
+    };
+
+    new Chart(emojiCtx, {
+        type: 'pie',
+        data: emojiData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+    // 日期趋势图
+    const dateCtx = document.getElementById('dateChart');
+    if (dateCtx) {
+        const dateData = {
+            labels: [{% for item in stats.date_stats %}'{{ item.session_date }}', {% endfor %}],
+    datasets: [{
+        label: '反馈数量',
+        data: [{% for item in stats.date_stats %}{{ item.count }}, {% endfor %}],
+        borderColor: '#2196F3',
+            backgroundColor: 'rgba(33, 150, 243, 0.2)',
+                tension: 0.4,
+                    fill: true
+        }]
+    };
+
+    new Chart(dateCtx, {
+        type: 'line',
+        data: dateData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

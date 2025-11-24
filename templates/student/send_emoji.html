@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}发送表情{% endblock %}
+
+{% block content %}
+<div class="content-box">
+    <h1>发送表情反馈</h1>
+    <p class="subtitle">选择最能描述您当前感受的表情符号</p>
+
+    {% if courses %}
+    <form method="POST" action="{{ url_for('student.send_emoji') }}" class="emoji-form">
+        <div class="form-group">
+            <label for="course_id">选择课程 *</label>
+            <select id="course_id" name="course_id" required>
+                <option value="">请选择课程</option>
+                {% for course in courses %}
+                <option value="{{ course.id }}">{{ course.course_name }} ({{ course.course_code }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>选择表情 *</label>
+            <div class="emoji-grid">
+                {% for emoji in emoji_list %}
+                <label class="emoji-option">
+                    <input type="radio" name="emoji" value="{{ emoji }}" required>
+                    <span class="emoji-display">{{ emoji }}</span>
+                    <span class="emoji-label">{{ emoji_names[emoji] }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="comment">补充说明（可选）</label>
+            <textarea id="comment" name="comment" rows="4" placeholder="您可以添加一些补充说明..."></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-large">提交反馈</button>
+        </div>
+    </form>
+    {% else %}
+    <p class="empty-state">您还没有选择任何课程。<a href="{{ url_for('student.courses') }}">立即选课</a></p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 表情选择交互效果
+    document.querySelectorAll('.emoji-option input').forEach(input => {
+        input.addEventListener('change', function () {
+            document.querySelectorAll('.emoji-option').forEach(opt => opt.classList.remove('selected'));
+            if (this.checked) {
+                this.parentElement.classList.add('selected');
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}学生主页{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>欢迎，{{ current_user.full_name or current_user.username }}！</h1>
+    <p class="subtitle">这是您的学生控制面板</p>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-info">
+                <h3>已选课程</h3>
+                <p class="stat-value">{{ courses|length }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">😊</div>
+            <div class="stat-info">
+                <h3>快速反馈</h3>
+                <p><a href="{{ url_for('student.send_emoji') }}" class="btn btn-sm btn-primary">发送表情</a></p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-info">
+                <h3>我的记录</h3>
+                <p><a href="{{ url_for('student.history') }}" class="btn btn-sm btn-secondary">查看历史</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-box">
+        <h2>我的课程</h2>
+        {% if courses %}
+        <div class="course-list">
+            {% for course in courses %}
+            <div class="course-card">
+                <h3>{{ course.course_name }}</h3>
+                <p class="course-code">课程代码: {{ course.course_code }}</p>
+                <p class="course-teacher">授课教师: {{ course.teacher_name }}</p>
+                <p class="course-desc">{{ course.description }}</p>
+                <p class="course-semester">学期: {{ course.semester }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-state">您还没有选择任何课程。<a href="{{ url_for('student.courses') }}">立即选课</a></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

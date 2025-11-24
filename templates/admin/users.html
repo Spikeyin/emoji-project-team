@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}用户管理{% endblock %}
+
+{% block content %}
+<div class="content-box">
+    <h1>用户管理</h1>
+
+    <div class="filter-bar">
+        <a href="{{ url_for('admin.users') }}"
+            class="btn btn-sm {% if not role_filter %}btn-primary{% else %}btn-secondary{% endif %}">全部</a>
+        <a href="{{ url_for('admin.users', role='student') }}"
+            class="btn btn-sm {% if role_filter == 'student' %}btn-primary{% else %}btn-secondary{% endif %}">学生</a>
+        <a href="{{ url_for('admin.users', role='teacher') }}"
+            class="btn btn-sm {% if role_filter == 'teacher' %}btn-primary{% else %}btn-secondary{% endif %}">教师</a>
+        <a href="{{ url_for('admin.users', role='admin') }}"
+            class="btn btn-sm {% if role_filter == 'admin' %}btn-primary{% else %}btn-secondary{% endif %}">管理员</a>
+    </div>
+
+    {% if users %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>用户名</th>
+                    <th>姓名</th>
+                    <th>邮箱</th>
+                    <th>角色</th>
+                    <th>注册时间</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.full_name or '-' }}</td>
+                    <td>{{ user.email or '-' }}</td>
+                    <td>
+                        <span class="badge badge-{{ user.role }}">
+                            {% if user.role == 'admin' %}管理员
+                            {% elif user.role == 'teacher' %}教师
+                            {% else %}学生{% endif %}
+                        </span>
+                    </td>
+                    <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p class="table-info">共 {{ users|length }} 个用户</p>
+    {% else %}
+    <p class="empty-state">暂无用户数据</p>
+    {% endif %}
+</div>
+{% endblock %}

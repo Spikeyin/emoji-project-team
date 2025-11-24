@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}历史记录{% endblock %}
+
+{% block content %}
+<div class="content-box">
+    <h1>我的反馈历史</h1>
+    <p class="subtitle">查看您提交的表情反馈记录</p>
+
+    {% if records %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>课程</th>
+                    <th>表情</th>
+                    <th>情绪</th>
+                    <th>日期</th>
+                    <th>时间</th>
+                    <th>补充说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.course_name }} ({{ record.course_code }})</td>
+                    <td class="emoji-cell">{{ record.emoji }}</td>
+                    <td>{{ record.emoji_name }}</td>
+                    <td>{{ record.session_date }}</td>
+                    <td>{{ record.time_formatted }}</td>
+                    <td>{{ record.comment or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">您还没有提交任何反馈记录。<a href="{{ url_for('student.send_emoji') }}">立即反馈</a></p>
+    {% endif %}
+</div>
+{% endblock %}

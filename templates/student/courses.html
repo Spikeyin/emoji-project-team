@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}选课{% endblock %}
+
+{% block content %}
+<div class="content-box">
+    <h1>课程列表</h1>
+    <p class="subtitle">选择您感兴趣的课程</p>
+
+    {% if courses %}
+    <div class="course-list">
+        {% for course in courses %}
+        <div class="course-card">
+            <h3>{{ course.course_name }}</h3>
+            <p class="course-code">课程代码: {{ course.course_code }}</p>
+            <p class="course-teacher">授课教师: {{ course.teacher_name }}</p>
+            <p class="course-desc">{{ course.description }}</p>
+            <p class="course-semester">学期: {{ course.semester }}</p>
+
+            {% if course.id in enrolled_ids %}
+            <button class="btn btn-success" disabled>已选课</button>
+            {% else %}
+            <form method="POST" action="{{ url_for('student.enroll', course_id=course.id) }}" style="display:inline;">
+                <button type="submit" class="btn btn-primary">选择课程</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">暂无可选课程</p>
+    {% endif %}
+</div>
+{% endblock %}
